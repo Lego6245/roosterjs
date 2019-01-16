@@ -43,7 +43,7 @@ export default function createEditorCore(
     return {
         contentDiv,
         document: contentDiv.ownerDocument,
-        defaultFormat: calcDefaultFormat(contentDiv, options.defaultFormat),
+        defaultFormat: calcDefaultFormat(contentDiv, options),
         corePlugins,
         currentUndoSnapshot: null,
         customData: {},
@@ -52,10 +52,23 @@ export default function createEditorCore(
         eventHandlerPlugins: eventHandlerPlugins,
         api: createCoreApiMap(options.coreApiOverride),
         defaultApi: createCoreApiMap(),
+        inDarkMode: options.darkModeOptions ? true : false,
     };
 }
 
-function calcDefaultFormat(node: Node, baseFormat: DefaultFormat): DefaultFormat {
+function calcDefaultFormat(node: Node, options: EditorOptions): DefaultFormat {
+    let baseFormat = null;
+    if (options.darkModeOptions) {
+        baseFormat = options.darkModeOptions.defaultFormat ? options.darkModeOptions.defaultFormat : <DefaultFormat>{
+            backgroundColor: 'rgb(51,51,51)',
+            textColor: 'rgb(255,255,255)',
+            ogsb: 'rgb(255,255,255)',
+            ogsc: 'rgb(0,0,0)',
+        };
+    } else {
+        baseFormat = options.defaultFormat;
+    }
+
     if (baseFormat && Object.keys(baseFormat).length === 0) {
         return {};
     }
@@ -70,6 +83,8 @@ function calcDefaultFormat(node: Node, baseFormat: DefaultFormat): DefaultFormat
         bold: baseFormat.bold,
         italic: baseFormat.italic,
         underline: baseFormat.underline,
+        ogsb: baseFormat.ogsb,
+        ogsc: baseFormat.ogsc,
     };
 }
 

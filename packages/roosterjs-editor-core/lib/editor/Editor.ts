@@ -333,11 +333,14 @@ export default class Editor {
      * before return. Use this parameter to remove any temporary content added by plugins.
      * @param includeSelectionMarker Set to true if need include selection marker inside the content.
      * When restore this content, editor will set the selection to the position marked by these markers
+     * @param getInDarkMode Set to true if you want to get the content of the editor in dark mode
+     * This is a no-op when in light mode. If true, instead of converting to light, it will return the 'real' editor content.
      * @returns HTML string representing current editor content
      */
     public getContent(
         triggerExtractContentEvent: boolean = true,
-        includeSelectionMarker: boolean = false
+        includeSelectionMarker: boolean = false,
+        getInDarkMode: boolean = false,
     ): string {
         let contentDiv = this.core.contentDiv;
         let content = contentDiv.innerHTML;
@@ -359,7 +362,31 @@ export default class Editor {
             content = extractContentEvent.content;
         }
 
+        if (this.core.inDarkMode && !getInDarkMode) {
+            content = this.getLightModeContent(content);
+        }
+
         return content;
+    }
+
+    private getLightModeContent(content: string): string {
+        let el = document.createElement('div');
+        el.innerHTML = content;
+        const allChildElements = el.getElementsByTagName('*') as HTMLCollectionOf<HTMLElement>;
+        [].forEach.call(allChildElements, (element: HTMLElement) => {
+            if (element.dataset && (element.dataset.ogsc || element.dataset.ogsb)) {
+                if (element.dataset.ogsc) {
+                    element.style.color = element.dataset.ogsc;
+                }
+
+                if (element.dataset.ogsb) {
+                    element.style.backgroundColor = element.dataset.ogsb;
+                }
+            }
+        });
+        const newContent = el.innerHTML;
+        //document.removeChild(el);
+        return newContent;
     }
 
     /**

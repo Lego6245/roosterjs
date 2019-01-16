@@ -1,3 +1,4 @@
+import DarkModeOptions from './DarkModeOptions';
 import EditorPlugin from './EditorPlugin';
 import UndoService from './UndoService';
 import { CoreApiMap } from './EditorCore';
@@ -57,6 +58,11 @@ interface EditorOptions {
      * Additional content edit features
      */
     additionalEditFeatures?: GenericContentEditFeature<PluginEvent>[];
+
+    /**
+     * Dark mode options block. If defined, the editor will load in Dark mode.
+     */
+    darkModeOptions?: DarkModeOptions;
 }
 
 export default EditorOptions;

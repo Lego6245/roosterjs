@@ -84,6 +84,11 @@ interface EditorCore {
      * Cached selection range of this editor
      */
     cachedSelectionRange: Range;
+
+    /**
+     * If the editor is in dark mode.
+     */
+    inDarkMode: boolean;
 }
 
 export default EditorCore;
