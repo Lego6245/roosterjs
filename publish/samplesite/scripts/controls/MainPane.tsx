@@ -9,6 +9,7 @@ import TitleBar from './titleBar/TitleBar';
 import { getAllPluginArray, getPlugins, getSidePanePluginArray } from './plugins';
 
 const styles = require('./MainPane.scss');
+const classnames = require('classnames/bind').bind(styles);
 
 class MainPane extends MainPaneBase {
     private mouseX: number;
@@ -18,7 +19,7 @@ class MainPane extends MainPaneBase {
         let plugins = getPlugins();
 
         return (
-            <div className={styles.mainPane}>
+            <div className={classnames(styles.mainPane, { darkMode: true })}>
                 <TitleBar className={styles.noGrow} />
                 <Ribbon
                     plugin={plugins.ribbon}
@@ -28,10 +29,11 @@ class MainPane extends MainPaneBase {
                 <div className={styles.body}>
                     <Editor
                         plugins={getAllPluginArray()}
-                        className={styles.editor}
+                        className={classnames(styles.editor, { darkMode: true })}
                         ref={this.editor}
                         initState={plugins.editorOptions.getBuildInPluginState()}
                         undo={plugins.snapshot}
+                        isDarkMode={true}
                     />
                     <div className={styles.resizer} onMouseDown={this.onMouseDown} />
                     <SidePane

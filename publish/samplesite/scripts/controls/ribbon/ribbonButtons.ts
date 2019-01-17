@@ -27,6 +27,19 @@ import {
     insertImage,
 } from 'roosterjs-editor-api';
 
+const colorMappings: { [key: string]: string } = {
+    '#757b80':'rgb(171, 177, 183)',
+    '#bd1398':'rgb(255, 125, 239)',
+    '#7232ad':'rgb(239, 165, 255)',
+    '#006fc9':'rgb(120, 180, 255)',
+    '#4ba524':'rgb(124, 212, 83)',
+    '#e2c501':'rgb(226, 197, 1)',
+    '#d05c12':'rgb(255, 145, 72)',
+    '#ff0000':'rgb(255, 96, 58)',
+    '#ffffff':'white',
+    '#000000':'white',
+}
+
 const buttons: { [key: string]: RibbonButtonType } = {
     bold: {
         title: 'Bold',
@@ -75,7 +88,14 @@ const buttons: { [key: string]: RibbonButtonType } = {
     textColor: {
         title: 'Text color',
         image: require('./svg/textcolor.svg'),
-        onClick: setTextColor,
+        onClick: (editor, value) => {
+            let ogsc;
+            if (editor.isDarkMode()) {
+                ogsc = value;
+                value = colorMappings[value];
+            }
+            setTextColor(editor, value, ogsc);
+        },
         dropDownItems: {
             '#757b80': 'Gray',
             '#bd1398': 'Violet',

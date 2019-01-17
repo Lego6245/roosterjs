@@ -26,6 +26,7 @@ export interface EditorProps {
     initState: BuildInPluginState;
     className?: string;
     undo?: UndoService;
+    isDarkMode?: boolean;
 }
 
 export default class Editor extends React.Component<EditorProps, BuildInPluginState> {
@@ -78,9 +79,8 @@ export default class Editor extends React.Component<EditorProps, BuildInPluginSt
             plugins: plugins,
             defaultFormat: defaultFormat,
             undo: this.props.undo,
-            darkModeOptions: {},
         };
-        this.editor = new RoosterJsEditor(this.contentDiv, options);
+        this.editor = new RoosterJsEditor(this.contentDiv, options, this.props.isDarkMode);
     }
 
     private disposeEditor() {

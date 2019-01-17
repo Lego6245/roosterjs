@@ -1,4 +1,5 @@
 import createEditorCore from './createEditorCore';
+import DarkModeOptions from '../interfaces/DarkModeOptions';
 import EditorCore from '../interfaces/EditorCore';
 import EditorOptions from '../interfaces/EditorOptions';
 import { GenericContentEditFeature } from '../interfaces/ContentEditFeature';
@@ -53,14 +54,26 @@ export default class Editor {
      * @param contentDiv The DIV HTML element which will be the container element of editor
      * @param options An optional options object to customize the editor
      */
-    constructor(contentDiv: HTMLDivElement, options: EditorOptions = {}) {
+    constructor(contentDiv: HTMLDivElement, options: EditorOptions = {}, darkMode: boolean | DarkModeOptions = false) {
         // 1. Make sure all parameters are valid
         if (getTagOfNode(contentDiv) != 'DIV') {
             throw new Error('contentDiv must be an HTML DIV element');
         }
 
+        // Set up dark mode defaults if not provided.
+        if (darkMode && typeof darkMode === 'boolean') {
+            darkMode = <DarkModeOptions>{
+                defaultFormat: <DefaultFormat>{
+                    backgroundColor: 'rgb(51,51,51)',
+                    textColor: 'rgb(255,255,255)',
+                    ogsb: 'rgb(255,255,255)',
+                    ogsc: 'rgb(0,0,0)',
+                }
+            }
+        }
+
         // 2. Store options values to local variables
-        this.core = createEditorCore(contentDiv, options);
+        this.core = createEditorCore(contentDiv, options, darkMode as DarkModeOptions);
 
         // 3. Initialize plugins
         this.core.plugins.forEach(plugin => plugin.initialize(this));
@@ -325,6 +338,10 @@ export default class Editor {
      */
     public isEmpty(trim?: boolean): boolean {
         return isNodeEmpty(this.core.contentDiv, trim);
+    }
+
+    public isDarkMode(): boolean {
+        return this.core.inDarkMode;
     }
 
     /**

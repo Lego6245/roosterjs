@@ -1,4 +1,5 @@
 import attachDomEvent from '../coreAPI/attachDomEvent';
+import DarkModeOptions from '../interfaces/DarkModeOptions';
 import DOMEventPlugin from '../corePlugins/DOMEventPlugin';
 import EditorCore, { CoreApiMap, CorePlugins } from '../interfaces/EditorCore';
 import EditorOptions from '../interfaces/EditorOptions';
@@ -20,7 +21,8 @@ import { getComputedStyles } from 'roosterjs-editor-dom';
 
 export default function createEditorCore(
     contentDiv: HTMLDivElement,
-    options: EditorOptions
+    options: EditorOptions,
+    darkModeOptions?: DarkModeOptions
 ): EditorCore {
     let corePlugins: CorePlugins = {
         undo: options.undo || new Undo(),
@@ -43,7 +45,7 @@ export default function createEditorCore(
     return {
         contentDiv,
         document: contentDiv.ownerDocument,
-        defaultFormat: calcDefaultFormat(contentDiv, options),
+        defaultFormat: calcDefaultFormat(contentDiv, options, darkModeOptions),
         corePlugins,
         currentUndoSnapshot: null,
         customData: {},
@@ -52,14 +54,14 @@ export default function createEditorCore(
         eventHandlerPlugins: eventHandlerPlugins,
         api: createCoreApiMap(options.coreApiOverride),
         defaultApi: createCoreApiMap(),
-        inDarkMode: options.darkModeOptions ? true : false,
+        inDarkMode: darkModeOptions ? true : false,
     };
 }
 
-function calcDefaultFormat(node: Node, options: EditorOptions): DefaultFormat {
+function calcDefaultFormat(node: Node, options: EditorOptions, darkModeOptions?: DarkModeOptions): DefaultFormat {
     let baseFormat = null;
-    if (options.darkModeOptions) {
-        baseFormat = options.darkModeOptions.defaultFormat ? options.darkModeOptions.defaultFormat : <DefaultFormat>{
+    if (darkModeOptions) {
+        baseFormat = darkModeOptions.defaultFormat ? darkModeOptions.defaultFormat : <DefaultFormat>{
             backgroundColor: 'rgb(51,51,51)',
             textColor: 'rgb(255,255,255)',
             ogsb: 'rgb(255,255,255)',

@@ -6,6 +6,8 @@ import { Browser } from 'roosterjs-editor-dom';
 import { FormatState } from 'roosterjs-editor-types';
 
 const styles = require('./RibbonButton.scss');
+const classnames = require('classnames/bind').bind(styles);
+
 let currentPusingButton: RibbonButtonType;
 
 export interface RibbonButtonProps {
@@ -34,16 +36,11 @@ export default class RibbonButton extends React.Component<RibbonButtonProps, Rib
     render() {
         let button = this.props.button;
         let editor = this.props.plugin.getEditor();
-        let className = styles.button;
-
-        if (
-            editor &&
+        let className = classnames(styles.button, { darkMode: (editor && editor.isDarkMode()), checked: (editor &&
             this.props.format &&
             button.checked &&
-            button.checked(this.props.format, editor)
-        ) {
-            className += ' ' + styles.checked;
-        }
+            button.checked(this.props.format, editor)) });
+
         return (
             <span className={styles.dropDownButton}>
                 <button

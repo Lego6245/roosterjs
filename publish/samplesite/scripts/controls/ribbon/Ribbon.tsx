@@ -5,6 +5,7 @@ import RibbonPlugin from './RibbonPlugin';
 import { getFormatState } from 'roosterjs-editor-api';
 
 let styles = require('./Ribbon.scss');
+const classNames = require('classnames/bind').bind(styles);
 
 export interface RibbonProps {
     plugin: RibbonPlugin;
@@ -16,6 +17,7 @@ export default class Ribbon extends React.Component<RibbonProps, {}> {
         let plugin = this.props.plugin;
         let editor = plugin.getEditor();
         let format = editor && getFormatState(editor);
+        let textButtonClass = classNames(styles.textButton, { darkMode: editor && editor.isDarkMode()})
         return (
             <div className={styles.ribbon + ' ' + (this.props.className || '')}>
                 {Object.keys(ribbonButtons).map(key => (
@@ -27,10 +29,10 @@ export default class Ribbon extends React.Component<RibbonProps, {}> {
                         onClicked={this.onButtonClicked}
                     />
                 ))}
-                <button onClick={this.onSave} className={styles.textButton}>
+                <button onClick={this.onSave} className={textButtonClass}>
                     Export
                 </button>
-                <button onClick={this.onClear} className={styles.textButton}>
+                <button onClick={this.onClear} className={textButtonClass}>
                     Clear
                 </button>
             </div>

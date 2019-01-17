@@ -13,6 +13,21 @@
     &.checked {
         background-color: $primaryLighter;
     }
+    &.darkMode {
+        background-color: rgb(51,51,51);
+
+        &.checked {
+            background-color: rgb(88,88,88);
+        }
+
+        &:hover {
+            background-color: rgb(110,110,110);
+        }
+    }
+}
+
+.button.darkMode img {
+    filter: invert(.7);
 }
 
 .dropDownButton {

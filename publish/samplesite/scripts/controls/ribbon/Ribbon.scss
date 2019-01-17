@@ -15,4 +15,12 @@
     &:hover {
         background-color: $primaryLighter2;
     }
+
+    &.darkMode {
+        background-color: rgb(51,51,51);
+
+        &:hover {
+            background-color: rgb(110,110,110);
+        }
+    }
 }
