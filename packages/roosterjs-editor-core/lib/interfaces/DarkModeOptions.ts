@@ -16,8 +16,9 @@ interface DarkModeOptions {
      * This is used when content is pasted or inserted via a method we can hook into.
      * This transform is currently "lossy" and will eliminate color information.
      * If you want change this behavior, you may define a different function here.
+     * It takes in the impacted HTMLElement
      */
-    onExternalContentTransform?: (htmlIn: string) => string;
+    onExternalContentTransform?: (htmlIn: HTMLElement) => void;
 
 }
 

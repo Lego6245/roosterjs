@@ -344,6 +344,10 @@ export default class Editor {
         return this.core.inDarkMode;
     }
 
+    public getDarkModeOptions(): DarkModeOptions {
+        return this.core.darkModeOptions;
+    }
+
     /**
      * Get current editor content as HTML string
      * @param triggerExtractContentEvent Whether trigger ExtractContent event to all plugins

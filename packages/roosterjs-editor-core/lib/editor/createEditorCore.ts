@@ -55,6 +55,7 @@ export default function createEditorCore(
         api: createCoreApiMap(options.coreApiOverride),
         defaultApi: createCoreApiMap(),
         inDarkMode: darkModeOptions ? true : false,
+        darkModeOptions: darkModeOptions,
     };
 }
 
