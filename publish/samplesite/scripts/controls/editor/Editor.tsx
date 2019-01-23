@@ -79,8 +79,9 @@ export default class Editor extends React.Component<EditorProps, BuildInPluginSt
             plugins: plugins,
             defaultFormat: defaultFormat,
             undo: this.props.undo,
+            inDarkMode: true,
         };
-        this.editor = new RoosterJsEditor(this.contentDiv, options, this.props.isDarkMode);
+        this.editor = new RoosterJsEditor(this.contentDiv, options);
     }
 
     private disposeEditor() {

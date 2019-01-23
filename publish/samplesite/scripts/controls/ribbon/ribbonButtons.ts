@@ -89,12 +89,7 @@ const buttons: { [key: string]: RibbonButtonType } = {
         title: 'Text color',
         image: require('./svg/textcolor.svg'),
         onClick: (editor, value) => {
-            let ogsc;
-            if (editor.isDarkMode()) {
-                ogsc = value;
-                value = colorMappings[value];
-            }
-            setTextColor(editor, value, ogsc);
+            setTextColor(editor, { lightModeColor: value, darkModeColor: colorMappings[value] });
         },
         dropDownItems: {
             '#757b80': 'Gray',
