@@ -131,7 +131,7 @@ export default class Paste implements EditorPlugin {
 
             for (let node of nodes) {
                 if (mergeCurrentFormat) {
-                    this.applyToElements(node, this.applyFormatting(clipboardData.originalFormat));
+                    this.applyToElements(node, this.applyFormatting(clipboardData.originalFormat, this.editor.isDarkMode()));
                 }
                 if (this.editor.isDarkMode()) {
                     // either use their paste handler or ours, but check it here.
@@ -191,11 +191,11 @@ export default class Paste implements EditorPlugin {
         }, ChangeSource.Paste);
     }
 
-    private applyFormatting = (format: DefaultFormat) => (element: HTMLElement) => {
-        applyFormat(element, format);
+    private applyFormatting = (format: DefaultFormat, isDarkMode: boolean) => (element: HTMLElement) => {
+        applyFormat(element, format, isDarkMode);
     }
 
-    private applyToElements(node: Node, callback: (element: HTMLElement) => void) {
+    private applyToElements(node: Node, elementTransform: (element: HTMLElement) => void) {
         let leaf = getFirstLeafNode(node);
         let parents: HTMLElement[] = [];
         while (leaf) {
@@ -210,7 +210,7 @@ export default class Paste implements EditorPlugin {
         }
         parents.push(<HTMLElement>node);
         for (let parent of parents) {
-            callback(parent);
+            elementTransform(parent);
         }
     }
 

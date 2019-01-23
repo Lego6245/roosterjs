@@ -1,5 +1,4 @@
 import attachDomEvent from '../coreAPI/attachDomEvent';
-import DarkModeOptions from '../interfaces/DarkModeOptions';
 import DOMEventPlugin from '../corePlugins/DOMEventPlugin';
 import EditorCore, { CoreApiMap, CorePlugins } from '../interfaces/EditorCore';
 import EditorOptions from '../interfaces/EditorOptions';
@@ -16,13 +15,12 @@ import select from '../coreAPI/select';
 import triggerEvent from '../coreAPI/triggerEvent';
 import TypeInContainerPlugin from '../corePlugins/TypeInContainerPlugin';
 import Undo from '../undo/Undo';
-import { DefaultFormat } from 'roosterjs-editor-types';
+import { DARK_MODE_DEFAULT_FORMAT, DefaultFormat } from 'roosterjs-editor-types';
 import { getComputedStyles } from 'roosterjs-editor-dom';
 
 export default function createEditorCore(
     contentDiv: HTMLDivElement,
-    options: EditorOptions,
-    darkModeOptions?: DarkModeOptions
+    options: EditorOptions
 ): EditorCore {
     let corePlugins: CorePlugins = {
         undo: options.undo || new Undo(),
@@ -45,7 +43,7 @@ export default function createEditorCore(
     return {
         contentDiv,
         document: contentDiv.ownerDocument,
-        defaultFormat: calcDefaultFormat(contentDiv, options, darkModeOptions),
+        defaultFormat: calcDefaultFormat(contentDiv, options),
         corePlugins,
         currentUndoSnapshot: null,
         customData: {},
@@ -54,22 +52,21 @@ export default function createEditorCore(
         eventHandlerPlugins: eventHandlerPlugins,
         api: createCoreApiMap(options.coreApiOverride),
         defaultApi: createCoreApiMap(),
-        inDarkMode: darkModeOptions ? true : false,
-        darkModeOptions: darkModeOptions,
+        inDarkMode: options.inDarkMode,
+        darkModeOptions: options.darkModeOptions,
     };
 }
 
-function calcDefaultFormat(node: Node, options: EditorOptions, darkModeOptions?: DarkModeOptions): DefaultFormat {
-    let baseFormat = null;
-    if (darkModeOptions) {
-        baseFormat = darkModeOptions.defaultFormat ? darkModeOptions.defaultFormat : <DefaultFormat>{
-            backgroundColor: 'rgb(51,51,51)',
-            textColor: 'rgb(255,255,255)',
-            ogsb: 'rgb(255,255,255)',
-            ogsc: 'rgb(0,0,0)',
-        };
-    } else {
-        baseFormat = options.defaultFormat;
+function calcDefaultFormat(node: Node, options: EditorOptions): DefaultFormat {
+    let baseFormat = options.defaultFormat;
+
+    if (options.inDarkMode) {
+        if (!baseFormat.backgroundColors) {
+            baseFormat.backgroundColors = DARK_MODE_DEFAULT_FORMAT.backgroundColors;
+        }
+        if (!baseFormat.textColors) {
+            baseFormat.textColors = DARK_MODE_DEFAULT_FORMAT.textColors;
+        }
     }
 
     if (baseFormat && Object.keys(baseFormat).length === 0) {
@@ -81,13 +78,25 @@ function calcDefaultFormat(node: Node, options: EditorOptions, darkModeOptions?:
     return {
         fontFamily: baseFormat.fontFamily || styles[0],
         fontSize: baseFormat.fontSize || styles[1],
-        textColor: baseFormat.textColor || styles[2],
-        backgroundColor: baseFormat.backgroundColor || '',
+        get textColor() {
+            return baseFormat.textColors ?
+                (options.inDarkMode ?
+                    baseFormat.textColors.darkModeColor :
+                    baseFormat.textColors.lightModeColor) :
+                (baseFormat.textColor || styles[2]);
+        },
+        textColors: baseFormat.textColors,
+        get backgroundColor() {
+            return baseFormat.backgroundColors ?
+                (options.inDarkMode ?
+                    baseFormat.backgroundColors.darkModeColor :
+                    baseFormat.backgroundColors.lightModeColor) :
+                (baseFormat.backgroundColor || styles[3]);
+        },
+        backgroundColors: baseFormat.backgroundColors,
         bold: baseFormat.bold,
         italic: baseFormat.italic,
         underline: baseFormat.underline,
-        ogsb: baseFormat.ogsb,
-        ogsc: baseFormat.ogsc,
     };
 }
 
