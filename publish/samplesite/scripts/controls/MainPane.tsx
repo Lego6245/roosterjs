@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import BuildInPluginState from './BuildInPluginState';
+import DarkModeContext from './contexts/DarkModeContext';
 import Editor from './editor/Editor';
 import MainPaneBase from './MainPaneBase';
 import Ribbon from './ribbon/Ribbon';
@@ -26,8 +27,10 @@ class MainPane extends MainPaneBase {
     render() {
         let plugins = getPlugins();
 
+        let isDark = this.context.isDark;
+
         return (
-            <div className={styles.mainPane}>
+            <div className={isDark ? styles.mainPaneDark : styles.mainPane}>
                 <TitleBar className={styles.noGrow} />
                 {this.state.showRibbon && (
                     <Ribbon
@@ -43,6 +46,7 @@ class MainPane extends MainPaneBase {
                         ref={this.editor}
                         initState={plugins.editorOptions.getBuildInPluginState()}
                         undo={plugins.snapshot}
+                        isDark={isDark}
                     />
                     {this.state.showSidePane ? (
                         <>
@@ -59,12 +63,12 @@ class MainPane extends MainPaneBase {
                             </button>
                         </>
                     ) : (
-                        <button
-                            className={`side-pane-toggle closed ${styles.showSidePane}`}
-                            onClick={this.onShowSidePane}>
-                            <div>Show side pane</div>
-                        </button>
-                    )}
+                            <button
+                                className={`side-pane-toggle closed ${styles.showSidePane}`}
+                                onClick={this.onShowSidePane}>
+                                <div>Show side pane</div>
+                            </button>
+                        )}
                 </div>
             </div>
         );
@@ -116,6 +120,44 @@ class MainPane extends MainPaneBase {
     };
 }
 
-export function mount(parent: HTMLElement) {
-    ReactDom.render(<MainPane />, parent);
+MainPane.contextType = DarkModeContext;
+
+interface DarkModeContextManagerState {
+    isDark: boolean,
+    toggleDarkMode: () => void,
 }
+
+const withDarkModeContextManager = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
+    return class extends React.Component<P, DarkModeContextManagerState>  {
+        constructor(props: P) {
+            super(props);
+
+            const toggleDarkMode = () => {
+                this.setState(state => {
+                    return {
+                        isDark: !state.isDark,
+                    }
+                })
+            }
+            this.state = {
+                isDark: false,
+                toggleDarkMode: toggleDarkMode,
+            }
+        }
+
+        render() {
+            return (
+                <DarkModeContext.Provider value={this.state}>
+                    <WrappedComponent {...this.props as P} />
+                </DarkModeContext.Provider>
+            )
+        }
+    }
+}
+
+export function mount(parent: HTMLElement) {
+    const WrappedMainPage = withDarkModeContextManager(MainPane);
+    ReactDom.render(<WrappedMainPage />, parent);
+}
+
+

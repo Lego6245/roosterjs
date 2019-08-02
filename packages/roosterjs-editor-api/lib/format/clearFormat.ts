@@ -45,19 +45,11 @@ export default function clearFormat(editor: Editor) {
             if (defaultFormat.fontSize) {
                 setFontSize(editor, defaultFormat.fontSize);
             }
-            if (defaultFormat.textColor) {
-                if (defaultFormat.textColors) {
-                    setTextColor(editor, defaultFormat.textColors);
-                } else {
-                    setTextColor(editor, defaultFormat.textColor);
-                }
+            if (defaultFormat.textColors || defaultFormat.textColor) {
+                setTextColor(editor, defaultFormat.textColors ? defaultFormat.textColors : defaultFormat.textColor);
             }
-            if (defaultFormat.backgroundColor) {
-                if (defaultFormat.backgroundColors) {
-                    setBackgroundColor(editor, defaultFormat.backgroundColors);
-                } else {
-                    setBackgroundColor(editor, defaultFormat.backgroundColor);
-                }
+            if (defaultFormat.backgroundColor || defaultFormat.backgroundColors) {
+                setBackgroundColor(editor, defaultFormat.backgroundColors ? defaultFormat.backgroundColors : defaultFormat.backgroundColor);
             }
             if (defaultFormat.bold) {
                 toggleBold(editor);

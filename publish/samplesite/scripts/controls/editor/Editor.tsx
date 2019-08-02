@@ -1,27 +1,28 @@
 import * as React from 'react';
 import BuildInPluginState, { UrlPlaceholder } from '../BuildInPluginState';
+import DarkModeContext from '../contexts/DarkModeContext';
+import SampleColorPickerPluginDataProvider from '../samplepicker/SampleColorPickerPluginDataProvider';
+import {
+    ContentEdit,
+    ContentEditFeatures,
+    CustomReplace as CustomReplacePlugin,
+    getDefaultContentEditFeatures,
+    HyperLink,
+    Paste,
+    TableResize,
+    Watermark
+    } from 'roosterjs-editor-plugins';
+import { EditorInstanceToggleablePlugins } from './EditorInstanceToggleablePlugins';
 import { ImageResize } from 'roosterjs-plugin-image-resize';
+import { PickerPlugin } from 'roosterjs-plugin-picker';
 import {
     Editor as RoosterJsEditor,
     EditorOptions,
     EditorPlugin,
     UndoService,
 } from 'roosterjs-editor-core';
-import { PickerPlugin } from 'roosterjs-plugin-picker';
 
-import {
-    HyperLink,
-    Paste,
-    ContentEdit,
-    Watermark,
-    TableResize,
-    ContentEditFeatures,
-    getDefaultContentEditFeatures,
-    CustomReplace as CustomReplacePlugin
-} from 'roosterjs-editor-plugins';
 
-import { EditorInstanceToggleablePlugins} from './EditorInstanceToggleablePlugins';
-import SampleColorPickerPluginDataProvider from '../samplepicker/SampleColorPickerPluginDataProvider';
 
 const styles = require('./Editor.scss');
 const assign = require('object-assign');
@@ -31,6 +32,7 @@ export interface EditorProps {
     initState: BuildInPluginState;
     className?: string;
     undo?: UndoService;
+    isDark?: boolean;
 }
 
 let editorInstance: RoosterJsEditor | null = null;
@@ -87,11 +89,11 @@ export default class Editor extends React.Component<EditorProps, BuildInPluginSt
             tableResize: pluginList.tableResize ? new TableResize() : null,
             pickerPlugin: pluginList.pickerPlugin
                 ? new PickerPlugin(new SampleColorPickerPluginDataProvider(), {
-                      elementIdPrefix: 'samplepicker-',
-                      changeSource: 'SAMPLE_COLOR_PICKER',
-                      triggerCharacter: ':',
-                      isHorizontal: true,
-                  })
+                    elementIdPrefix: 'samplepicker-',
+                    changeSource: 'SAMPLE_COLOR_PICKER',
+                    triggerCharacter: ':',
+                    isHorizontal: true,
+                })
                 : null,
             customReplace: pluginList.customReplace ? new CustomReplacePlugin() : null,
         };
@@ -104,6 +106,10 @@ export default class Editor extends React.Component<EditorProps, BuildInPluginSt
             plugins: plugins,
             defaultFormat: defaultFormat,
             undo: this.props.undo,
+            inDarkMode: this.props.isDark,
+            darkModeOptions: {
+                transformOnInitialize: true,
+            }
         };
         this.editor = new RoosterJsEditor(this.contentDiv, options);
     }
@@ -138,6 +144,8 @@ export default class Editor extends React.Component<EditorProps, BuildInPluginSt
         return assign(defaultFeatures, this.state.contentEditFeatures);
     }
 }
+
+Editor.contextType = DarkModeContext;
 
 // expose the active editor the global window for integration tests
 Object.defineProperty(window, 'globalRoosterEditor', {

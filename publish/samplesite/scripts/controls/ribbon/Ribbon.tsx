@@ -1,4 +1,5 @@
 import * as React from 'react';
+import DarkModeContext from '../contexts/DarkModeContext';
 import RibbonButton from './RibbonButton';
 import ribbonButtons from './ribbonButtons';
 import RibbonPlugin from './RibbonPlugin';
@@ -33,6 +34,14 @@ export default class Ribbon extends React.Component<RibbonProps, {}> {
                 <button onClick={this.onClear} className={styles.textButton}>
                     Clear
                 </button>
+                <DarkModeContext.Consumer>
+                    {({ isDark, toggleDarkMode }) => (
+                        <button onClick={toggleDarkMode} className={styles.textButton}>
+                            Toggle Dark Mode
+                        </button>
+                    )}
+
+                </DarkModeContext.Consumer>
             </div>
         );
     }
